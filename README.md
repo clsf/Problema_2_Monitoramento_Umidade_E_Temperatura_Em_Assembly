@@ -57,9 +57,10 @@ A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos 
         <div align="center">
           <img src="/img/Formula_divisor.png" alt="Formula">
           <p>
-          Formula Divisor.
+          Formula Divisor
           </p>
       </div>
+
        - Este número em binário é 111101000010.01, desta maneira é possivel saber o valor da parte baixa do divisor(01000010) e a parte alta(1111)
 
       - È registrado o valor 01000010 no DLL(divisor latch low) através do registrador UART_DLL 
