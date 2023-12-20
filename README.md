@@ -60,14 +60,14 @@ A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos 
           Formula Divisor.
           </p>
       </div>
-      - Este número em binário é 111101000010.01, desta maneira é possivel saber o valor da parte baixa do divisor(01000010) e a parte alta(1111)
+       - Este número em binário é 111101000010.01, desta maneira é possivel saber o valor da parte baixa do divisor(01000010) e a parte alta(1111)
 
       - È registrado o valor 01000010 no DLL(divisor latch low) através do registrador UART_DLL 
 
       - É registrado o valor 1111 no DLH(divisor latch hig) através do registrador UART_DLH 
 
       - È desativado o DLAB no registrador UART_LCR para que os endereços de memória voltem a ter suas funções anteriores 
-      
+
       - Configura-se o tamanho da palavra como 8 bits e desativa o bit de paridade através do registrado UART_LCR 
   2. dataReceiver:
     - Após ser chamada, a função verifica se existe algum dado pronto para ser lido no buffer do receiver através do registrador UART_LSR verificando o bit DR(data ready)
