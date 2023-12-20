@@ -54,9 +54,9 @@ A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos 
       - È habilitado o FIFO através do registrador UART_FCR
       - Devido ao fato dos registradores que representam a parte alta e parte baixa do divisor do baud rate possuirem o mesmo endereço de memória que outros registradores que tem funções diferentes, é necessário que seja ativado o DLAB, que está no registrador UART_LCR, para que os endereços de memoria que serão utilizados tenham a função esperada de divisor  
         - Para saber qual valor irá ser colocado no divicor é necessário realizar esta operação: 
-          \[
-          \frac{600 \text{MHz}}{9600 \times 16} = 3906.25
-          \] 
+\[
+  \frac{600 \text{MHz}}{9600 \times 16} = 3906.25
+\] 
         - Este número em binário é 111101000010.01, desta maneira é possivel saber o valor da parte baixa do divisor(01000010) e a parte alta(1111)
       - È registrado o valor 01000010 no DLL(divisor latch low) através do registrador UART_DLL 
       - É registrado o valor 1111 no DLH(divisor latch hig) através do registrador UART_DLH 
