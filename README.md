@@ -238,7 +238,6 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
       - Habilita o PLL_PERIPH0 como fonte de clock de 600MHz através do registrador PLL_PERIPH0_CTRL_REG 
       - Seleciona o PLL_PERIPH0 como fonte de clock através do registrador APB2_CFG_REG 
       - Habilita o UART3_GATING que para ativar o clock no barramento através do registrador BUS_CLK_GATING_REG3  
-
     - Configurando a UART3 
       - È habilitado o FIFO através do registrador UART_FCR
       - Devido ao fato dos registradores que representam a parte alta e parte baixa do divisor do baud rate possuirem o mesmo endereço de memória que outros registradores que tem funções diferentes, é necessário que seja ativado o DLAB, que está no registrador UART_LCR, para que os endereços de memoria que serão utilizados tenham a função esperada de divisor   
