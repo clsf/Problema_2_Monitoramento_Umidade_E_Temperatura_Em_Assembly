@@ -44,7 +44,36 @@ Forneça instruções claras sobre como executar o projeto. Isso pode incluir re
 Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a plataforma Orange.
 
 ### Módulo GPIOMEM
-Explique a funcionalidade do módulo GPIOMEM, detalhando seu papel no projeto.
+#### Módulos auxiliares
+##### unistd
+O unistd é responsável por definir as constantes para os números de chamadas do sistema que serão utilizadas no programa. Essas constantes são associadas aos serviços do kernel do sistema operacional que podem ser invocados pelo programa.
+As quais são:
+- sys_restart_syscall (0): Esta chamada do sistema reinicia a execução de uma chamada anterior que foi interrompida.
+- sys_exit (1): Causa a terminação normal do processo. O valor retornado pelo processo é passado como argumento.
+- sys_fork (2): Cria um novo processo filho, duplicando o processo chamador.
+- sys_read (3): Lê dados de um descritor de arquivo (por exemplo, um arquivo, dispositivo ou soquete).
+- sys_write (4): Escreve dados em um descritor de arquivo.
+- sys_open (5): Abre ou cria um arquivo e retorna um descritor de arquivo para o mesmo.
+- sys_close (6): Fecha um descritor de arquivo.
+- sys_creat (8): Cria um novo arquivo.
+- sys_link (9): Cria um novo nome (link) para um arquivo existente.
+- sys_unlink (10): Remove um nome (link) para um arquivo. Se o link for o último, o arquivo é excluído.
+- sys_execve (11): Executa um programa a partir de um arquivo executável.
+- sys_nanosleep (162): Pausa a execução do programa pelo tempo especificado em nanossegundos.
+- sys_mmap2 (192): Mapeia arquivos ou dispositivos na memória.
+  
+Essas constantes são usadas para identificar qual chamada do sistema deve ser feita quando o programa precisa interagir com o kernel do sistema operacional para realizar operações específicas, como ler ou escrever em arquivos, criar processos, entre outras.
+
+##### fileio
+Esse módulo é responsável por definir os macros que encapsulam as chamadas do sistema relacionadas a operações de entrada e saída de arquivos. O código utiliza as constantes das chamadas do sistema definidas no unistd.
+Foram desenvolvivas quatro macros para gerenciar essas operações:
+- <b>openFile:</b> Macro responsável por abrir um arquivo em modo de leitura e escrita, utiliza a chamada do sistema sys_open.
+- <b>redFile:</b> Usa a chamada de sistema sys_read para ler um arquivo já aberto.
+- <b>writeFile</b> Usa a chamada de sistema sys_write para escrever em um arquivo já aberto.
+- <b>flushClose</b> Utiliza duas chamadas de sistema, a sys_fsync para sincronizar e armaenar o estado do arquivo aberto e a sys_close para fechá-lo.
+
+### Módulo LCD
+Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
 
 ### Módulo LCD
 Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
