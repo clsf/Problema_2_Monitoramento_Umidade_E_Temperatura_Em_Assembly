@@ -216,7 +216,7 @@ A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos 
 Além disso, para obter o endereço base do CCU, endereço base para acessar os registradores da seção "inicializando a UART",foi feita uma subtração com o endereço já obtido do PIOO, já que assim já estariamos com o endereço do CCU com a operação: 
 
 <div align="center">
-  <img src="/img/Formula_Endereco.png" alt="Formula Endereço">
+  <img src="/img/Formula_endereco.png" alt="Formula Endereço">
     <p>
     Fórmula endereço do CCU
     </p>
