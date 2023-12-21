@@ -23,6 +23,12 @@ Problema 2 da disciplina de Sistemas Digitais - Monitoramento de Temperatura e H
 
 ## Introdução
 Nesta seção, abordaremos informações essenciais sobre o projeto, incluindo uma visão geral do desenvolvimento na plataforma Orange, módulos responsáveis e referências ao projeto de Paulo.
+<div align="center">
+  <img src="/img/fluxoHardware.drawio.png" alt="Fluxograma do hardware">
+   <p>
+    Fluxograma do hardware
+    </p>
+</div>
 
 - **Projeto na Orange:** Descreva brevemente o projeto na plataforma Orange, destacando os principais módulos e suas responsabilidades.
 
@@ -166,10 +172,24 @@ A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos 
 ### Orquestração das funcionalidades
 A coordenação e execução das funcionalidades essenciais são centralizadas em três módulos principais: main, inputMenu e outputMenu. Conforme ilustrado no diagrama, a main desempenha um papel crucial no mapeamento, inicialização e leitura do buffer, enquanto o inputMenu encarrega-se da leitura das solicitações do usuário. Por sua vez, o outputMenu é responsável por gerar e apresentar as respostas correspondentes a essas solicitações. Essa divisão de responsabilidades entre os módulos constitui a base para o funcionamento coordenado e eficiente do sistema.
 
+<div align="center">
+  <img src="/img/mains.drawio.png" alt="Fluxograma da main inputmenu e outputmenu">
+   <p>
+    Fluxograma da main inputmenu e outputmenu
+    </p>
+</div>
+
 #### Main
 Responsável por orquestrar o funcionamento integral do programa, o módulo `main` desempenha um papel crucial na inicialização do sistema, configuração de GPIO, controle do LCD e gerenciamento da comunicação UART. Além disso, direciona o fluxo para os módulos `inputMenu` e `outputMenu` conforme necessário.
 
 Na prática, a função principal (`main`) concentra-se no mapeamento dos botões do LCD e UART, juntamente com a inicialização da LCD e UART. Após essa fase inicial, a `main` verifica a chave para determinar se deve direcionar o usuário para a tela de entrada (`inputMenu`) ou de saída (`outputMenu`). Também incorpora o `readBuffer`, monitorando continuamente a chegada de dados do `dataReceiver`. Essa monitorização avalia se os dados recebidos indicam a necessidade de desativar a medição contínua de temperatura ou umidade.
+
+<div align="center">
+  <img src="/img/readBuffer.drawio.png" alt="Fluxograma do readBuffer">
+   <p>
+    Fluxograma do readBuffer
+    </p>
+</div>
 
 ##### Fluxo de Execução
 
@@ -219,6 +239,13 @@ O módulo `InputMenu` desempenha um papel crucial no gerenciamento das interaç�
 - **subTarget:** Função responsável por subtrair a variável do sensor ou comando, dependendo da etapa. Caso esteja no limite, chama o método `limitSub`, que reinicia a variável e chama `printInputMenu`.
 
 - **printInputMenu:** Exibe a tela de entrada e, se estiver na fase de comando, chama o método `command`, que escreverá a linha de comando no LCD, retornando para o `inputMenu`.
+
+<div align="center">
+  <img src="/img/confirm.drawio.png" alt="Fluxograma da função confirm">
+   <p>
+    Fluxograma da função confirm
+    </p>
+</div>
 
 #### OutputMenu Module
 
