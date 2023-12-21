@@ -75,9 +75,6 @@ Foram desenvolvivas quatro macros para gerenciar essas operações:
 ### Módulo LCD
 Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
 
-### Módulo LCD
-Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
-
 <div align="center">
   <img src="/img/display.png" alt="HD44780U (LCD-II)">
    <p>
