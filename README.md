@@ -32,10 +32,87 @@ Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a platafo
 Explique a funcionalidade do módulo GPIOMEM, detalhando seu papel no projeto.
 
 ### Módulo LCD
-Descreva as características e a função do módulo LCD, destacando sua contribuição para o projeto.
+Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
+
+<div align="center">
+  <img src="/img/display.png" alt="HD44780U (LCD-II)">
+   <p>
+      Diagrama de Estados do Receiver.
+    </p>
+</div>
+
+#### Pinos
+
+O display possui ao todo 14 pinos, porém para solução foi necessário fazer o manuseio somente dos seguintes pinos:
+- RS: Seleciona o registrador de instrução caso esteja em 0 ou o registrador de dados caso esteja em 1.
+- R/W: Seleciona a operação de escrita caso esteja em 0 ou a operação de leitura caso esteja em 1.
+- E: Inicia uma operação de leitura ou escrita de dados quando em 1.
+- D7, D6, D5, D4: Usado para transferência e recepção de dados.
+
+Obs. No kit de desenvolvimento utilizado o pino R/W está ligado diretamente ao GND, logo só é possível fazer operações de escrita.
+
+#### Instruções
+
+A comunicação com o display é feita através de instruções enviadas ao mesmo utilizando os pinos citados anteriormente. Para solução foram utilizados as seguintes instruções:
+
+| Instruction        | RS | R/W | DB7 | DB6 | DB5 | DB4 | DB3 | DB2 | DB1 | DB0 | Description        |
+|--------------------|----|-----|-----|-----|-----|-----|-----|-----|-----|-----|--------------------|
+| Function set       | 0  | 0   | 0   | 0   | 1   | DL  | N   | F   | -   | -   | Define o comprimento dos dados da interface (DL), número de linhas de exibição(N) e fonte de caracteres (F).       |
+| Display on/off     | 0  | 0   | 0   | 0   | 0   | 0   | 1   | D   | C   | B   | Liga/desliga toda a exibição (D), cursor ligado/desligado (C) e piscando da posição do cursor.    |
+| Entry mode set     | 0  | 0   | 0   | 0   | 0   | 0   | 0   | 1   | I/D | S   | Define a direção do movimento do cursor e especifica a mudança de exibição. Essas operações são executadas durante a gravação e leitura de dados.         |
+| Write data         | 1  | 0   | -   | -   | -   | -   | -   | -   | -   | -   | Grava dados em DDRAM ou CGRAM.         |
+| Set DDRAM address  | 0  | 0   | 1   | ADD | ADD | ADD | ADD | ADD | ADD | ADD | Define o endereço DDRAM. Os dados DRAM são enviados e recebidos após esta configuração.  |
+| Clear display      | 0  | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 1   | Limpa todo o display e define o endereço DDRAM como 0 no contador de endereços.      |
+| Return home        | 0  | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 1   | -   | Define o endereço DDRAM como 0 no contador de endereços. Também retorna a exibição de ser deslocada para a posição original. O conteúdo da DDRAM permanece inalterado.        |
+
+#### Tempo do Enable
+
+Após colocar todos os pinos utilizados nas instruções com os sinais referentes a instrução a ser tomada é necessário colocar em alto a entrada E (enable) do display. Para isso deve seguir os devidos intervalos de tempo informados pelo fabricante.
+
+<div align="center">
+  <img src="/img/tempo_do_eneable.png" alt="Waveform do Tempo da Operação de Escrita">
+   <p>
+      Waveform do Tempo da Operação de Escrita. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
+    </p>
+</div>
+
+<div align="center">
+  <img src="/img/tempo_do_eneable_tabela.png" alt="Tempo da Operação de Escrita">
+   <p>
+      Tempo da Operação de Escrita. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
+    </p>
+</div>
+
+Ao observar as imagens é possivel perceber que para que a instrução seja executada corretamente o pino E deve ser habiltiado no minimo 60 ns (Adress set-up time) depois da ultima instrução. Além disso ele tem que permancer habilitado por no minimo 450 ns (Enable pulse width). Por fim deve ser desabilitado por no minimo 20 ns (Address hold time).
+
+#### Inicialização
+
+Em condições de alimentação ideais a inicialização do display já é feita automaticamente porem como a chance de falha em alcansar essas condições se faz necessario a implementação da inicialização. A inicialização se dá de acordo com o fluxograma a seguir.
+
+<div align="center">
+  <img src="/img/inicializacao_do_display.png" alt="Processo de Inicialização do Display">
+   <p>
+      Processo de Inicialização do Display. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
+    </p>
+</div>
+
+É possivel observar que no processo a cima é usada a função *Function set* para definir o modo de operação de 4 bits, esse modo é utilizado porque no kit de desenvolvimento, como já falado, são utilizados apenas 4 pinos de dados, então faz-se necessario realizar essa mudança. Desse modo os dados das intruções antes passadas atraves de 8 pinos de dados em um envio somente, agora passam a ser passadas ao longo de 2 envios, sendo o primeiros os 4 dados mais significativos e os 4 ultimos, os menos significativos.
+
+#### Implementação
+
+As instruções citadas anteriormente foram implementadas utilizando as funções *GPIOTurnOff* e *GPIOTurnOn* do modulo *gpiomen.s* para colocar em alto ou em baixo os pinos utilizados. Alem delas também foi utilizado a função *nanoSleep* para espera dos devidos tempos tanto para o *Eneble* quanto para o processo de inicialização.
+
+#### Exibição de Strings
+
+Texto aqui
+
+#### Conversão de Decimal para ASCII
+
+Texto aqui
 
 ### Módulo UART
 Este módulo foi projetado para realizar a configuração e uso da UART em uma Orange Pi PC Plus. A UART (Universal asynchronous Receiver/Transmitter) é um protocolo essencial para a comunicação serial entre dispositivos e foi dita para transmissões de palavras de 8 bits, com 1 bit de start, sem bit de paridade e com a velociadade de transmissão de aproxiamdamente 9600 bps. 
+
 
 #### Modo de operação
 O modo de operação UART utilizado é o 16550.Este modo contém buffers no formato FIFO tanto para o transmitter como para o receiver, que servem para armazenar os dados que são recebidos dando a possibilidade do programador que estiver utilizando este modo escolha em que momento os dados serão lidos.
