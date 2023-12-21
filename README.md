@@ -130,7 +130,7 @@ Após colocar todos os pinos utilizados nas instruções com os sinais referente
 </div>
 
 <div align="center">
-  <img src="/img/tempo_do_eneable_tabela.png" alt="Tempo da Operação de Escrita">
+  <img src="/img/tempo_do_eneable_tabela.png" alt="Tempo da Operação de Escrita" width="400">
    <p>
       Tempo da Operação de Escrita. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
     </p>
@@ -143,7 +143,7 @@ Ao observar as imagens é possivel perceber que para que a instrução seja exec
 Em condições de alimentação ideais a inicialização do display já é feita automaticamente porem como a chance de falha em alcançar essas condições se faz necessario a implementação da inicialização. A inicialização se dá de acordo com o fluxograma a seguir.
 
 <div align="center">
-  <img src="/img/inicializacao_do_display.png" alt="Processo de Inicialização do Display">
+  <img src="/img/inicializacao_do_display.png" alt="Processo de Inicialização do Display" width="400">
    <p>
       Processo de Inicialização do Display. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
     </p>
