@@ -197,30 +197,65 @@ Para a divisão em dois números e conversão para ASCII foi utilizada a seguint
 - Por fim soma-se a cada um desses valores 48. Desse modo obtem-se o equivalente ASCCI de cada digito do número.
 
 ### Módulo UART
-Este módulo foi projetado para realizar a configuração e uso da UART em uma Orange Pi PC Plus. A UART (Universal asynchronous Receiver/Transmitter) é um protocolo essencial para a comunicação serial entre dispositivos e foi dita para transmissões de palavras de 8 bits, com 1 bit de start, sem bit de paridade e com a velociadade de transmissão de aproxiamdamente 9600 bps. 
+Este módulo foi projetado para realizar a configuração e uso da UART em uma Orange Pi PC Plus. A UART (Universal asynchronous Receiver/Transmitter) é um protocolo essencial para a comunicação serial entre dispositivos e foi feita para transmissões de palavras de 8 bits, com 1 bit de start, sem bit de paridade e com a velociadade de transmissão de aproxiamdamente 9600 bps. 
 
 
 #### Modo de operação
 O modo de operação UART utilizado é o 16550. Este modo contém buffers no formato FIFO tanto para o transmitter como para o receiver, que servem para armazenar os dados que são recebidos dando a possibilidade do programador que estiver utilizando este modo escolha em que momento os dados serão lidos.
 
-#### Escolha de pinos
-A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos escolhidos foram o PA13 e PA14, que são podem ser utilizados como UART3.Sendo assim as escolhas de endereços e configurações tiveram como base UART3.(imagem Gpioo?)
+#### Escolha de pinos e endereçamento
+A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos escolhidos foram o PA13 e PA14, que são podem ser utilizados como UART3.Sendo assim as escolhas de endereços e configurações tiveram como base UART3.
+
+<div align="center">
+  <img src="/img/imagem_gpioo.png" alt="Gpioo Pinos">
+   <p>
+      Orange Pi PC Plus Pinout Fonte: <a href="http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-PC-Plus.html">Orange pi pc plus</a>
+    </p>
+</div>
+
+Além disso, para obter o endereço base do CCU, endereço base para acessar os registradores da seção "inicializando a UART",foi feita uma subtração com o endereço já obtido do PIOO, já que assim já estariamos com o endereço do CCU com a operação: 
+
+<div align="center">
+  <img src="/img/Formula_Endereco.png" alt="Formula Endereço">
+    <p>
+    Fórmula endereço do CCU
+    </p>
+</div> 
+
+Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU 
+
+<div align="center">
+  <img src="/img/endereco_ccu.png" alt="Endereço CCU">
+   <p>
+       Endereço do CCU e PIOO Fonte:<a href="https://drive.google.com/file/d/1AV0gV4J4V9BVFAox6bcfLu2wDwzlYGHt/view">Datasheet Pag:84</a>
+    </p>
+</div>
 
 ##### Funções implementadas 
   1. initUART: 
+
     - Inicializando a UART 
       - È desabilitado duas vezes em sequência o reset da UART3 através do registrador BUS_SOFT_RST_REG4 
       - Habilita o PLL_PERIPH0 como fonte de clock de 600MHz através do registrador PLL_PERIPH0_CTRL_REG 
       - Seleciona o PLL_PERIPH0 como fonte de clock através do registrador APB2_CFG_REG 
       - Habilita o UART3_GATING que para ativar o clock no barramento através do registrador BUS_CLK_GATING_REG3  
+
     - Configurando a UART3 
       - È habilitado o FIFO através do registrador UART_FCR
-      - Devido ao fato dos registradores que representam a parte alta e parte baixa do divisor do baud rate possuirem o mesmo endereço de memória que outros registradores que tem funções diferentes, é necessário que seja ativado o DLAB, que está no registrador UART_LCR, para que os endereços de memoria que serão utilizados tenham a função esperada de divisor  
+      - Devido ao fato dos registradores que representam a parte alta e parte baixa do divisor do baud rate possuirem o mesmo endereço de memória que outros registradores que tem funções diferentes, é necessário que seja ativado o DLAB, que está no registrador UART_LCR, para que os endereços de memoria que serão utilizados tenham a função esperada de divisor   
+
+        <div align="center">
+          <img src="/img/Enderecos_iguais.png" alt="Endereços iguais">
+          <p>
+          Endereços Iguais Fonte:<a href="https://drive.google.com/file/d/1AV0gV4J4V9BVFAox6bcfLu2wDwzlYGHt/view">Datasheet Pag:466</a>
+        </p>
+      </div>
+
         - Para saber qual valor irá ser colocado no divisor é necessário realizar esta operação:
         <div align="center">
           <img src="/img/Formula_divisor.png" alt="Formula">
           <p>
-          Formula Divisor
+          Fórmula Divisor
           </p>
       </div>
 
@@ -234,11 +269,12 @@ A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos 
 
       - Configura-se o tamanho da palavra como 8 bits e desativa o bit de paridade através do registrado UART_LCR 
   2. dataReceiver:
+
     - Após ser chamada, a função verifica se existe algum dado pronto para ser lido no buffer do receiver através do registrador UART_LSR verificando o bit DR(data ready)
+
     - Caso tenha algum dado para ser lido é lido o endereço de memória correspondente ao receiver e o dado é obtido  
 
-  Para realizar o envio de dados a única operação necessária é armazenar um valor no endereço de memória correspondente ao transmitter da uart, por este motivo não foi necessária a criação de uma função especifica para isso 
-    
+  Para realizar o envio de dados a única operação necessária é armazenar um valor no endereço de memória correspondente ao transmitter da uart, por este motivo não foi necessária a criação de uma função especifica para isso.    
 
 ### Orquestração das funcionalidades
 A coordenação e execução das funcionalidades essenciais são centralizadas em três módulos principais: main, inputMenu e outputMenu. Conforme ilustrado no diagrama, a main desempenha um papel crucial no mapeamento, inicialização e leitura do buffer, enquanto o inputMenu encarrega-se da leitura das solicitações do usuário. Por sua vez, o outputMenu é responsável por gerar e apresentar as respostas correspondentes a essas solicitações. Essa divisão de responsabilidades entre os módulos constitui a base para o funcionamento coordenado e eficiente do sistema.
