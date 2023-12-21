@@ -225,7 +225,7 @@ Além disso, para obter o endereço base do CCU, endereço base para acessar os 
 Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU 
 
 <div align="center">
-  <img src="/img/endereco_ccu.png" alt="Endereço CCU">
+  <img src="/img/endereco_CCU.png" alt="Endereço CCU">
    <p>
        Endereço do CCU e PIOO Fonte:<a href="https://drive.google.com/file/d/1AV0gV4J4V9BVFAox6bcfLu2wDwzlYGHt/view">Datasheet Pag:84</a>
     </p>
