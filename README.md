@@ -88,19 +88,19 @@ Foram desenvolvivas quatro macros para gerenciar essas operações:
 Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
 
 <div align="center">
-  <img src="/img/display.png" alt="HD44780U (LCD-II)">
+  <img src="/img/display.png" alt="HD44780U (LCD-II)" width="300">
    <p>
-      Diagrama de Estados do Receiver.
+      HD44780U (LCD-II)
     </p>
 </div>
 
 #### Pinos
 
 O display possui ao todo 14 pinos, porém para solução foi necessário fazer o manuseio somente dos seguintes pinos:
-- RS: Seleciona o registrador de instrução caso esteja em 0 ou o registrador de dados caso esteja em 1.
-- R/W: Seleciona a operação de escrita caso esteja em 0 ou a operação de leitura caso esteja em 1.
-- E: Inicia uma operação de leitura ou escrita de dados quando em 1.
-- D7, D6, D5, D4: Usado para transferência e recepção de dados.
+- **RS:** Seleciona o registrador de instrução caso esteja em 0 ou o registrador de dados caso esteja em 1.
+- **R/W:** Seleciona a operação de escrita caso esteja em 0 ou a operação de leitura caso esteja em 1.
+- **E:** Inicia uma operação de leitura ou escrita de dados quando em 1.
+- **D7, D6, D5, D4:** Usado para transferência e recepção de dados.
 
 Obs. No kit de desenvolvimento utilizado o pino R/W está ligado diretamente ao GND, logo só é possível fazer operações de escrita.
 
@@ -123,7 +123,7 @@ A comunicação com o display é feita através de instruções enviadas ao mesm
 Após colocar todos os pinos utilizados nas instruções com os sinais referentes a instrução a ser tomada é necessário colocar em alto a entrada E (enable) do display. Para isso deve seguir os devidos intervalos de tempo informados pelo fabricante.
 
 <div align="center">
-  <img src="/img/tempo_do_eneable.png" alt="Waveform do Tempo da Operação de Escrita">
+  <img src="/img/tempo_do_eneable.png" alt="Waveform do Tempo da Operação de Escrita" width="400">
    <p>
       Waveform do Tempo da Operação de Escrita. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
     </p>
@@ -140,7 +140,7 @@ Ao observar as imagens é possivel perceber que para que a instrução seja exec
 
 #### Inicialização
 
-Em condições de alimentação ideais a inicialização do display já é feita automaticamente porem como a chance de falha em alcansar essas condições se faz necessario a implementação da inicialização. A inicialização se dá de acordo com o fluxograma a seguir.
+Em condições de alimentação ideais a inicialização do display já é feita automaticamente porem como a chance de falha em alcançar essas condições se faz necessario a implementação da inicialização. A inicialização se dá de acordo com o fluxograma a seguir.
 
 <div align="center">
   <img src="/img/inicializacao_do_display.png" alt="Processo de Inicialização do Display">
@@ -157,11 +157,44 @@ As instruções citadas anteriormente foram implementadas utilizando as funçõe
 
 #### Exibição de Strings
 
-Texto aqui
+Para exibição de uma string já inserida na memoria (.data) diretamente no display, foi necessario fazer um algoritmo que faz uso da instrução wiriteData para escrever caracter a caracter da string no display.
+
+O algortimo é composto por diversas partes, e segue o fluxo presente na imagem abaixo
+
+<div align="center">
+  <img src="/img/writeString.png" alt="Fluxograma da função writeString" width="150">
+   <p>
+      Fluxograma da função writeString
+    </p>
+</div>
+
+- **writeString:** É uma macro que é chamada quando se deseja exibir uma string no display. Ela é reponsavel por iniciar o procedimento de exibição. Para tal, ela salva a string no registrador R1 e também o tamanho da mesma no registrador R2. Além disso ela inicializa o contador (R0) que guarda o index do caracter a ser escrito no display.
+
+- **funcWriteString:** Salva o link para o local de chamada da função.
+
+- **loopWriteString:** Nessa label, cada caracter da string é percorrido e exibido, incrementando-se o valor de R0 até que ele seja igual ao tamanho da string. Ao final é usado o link salvo em *funcWriteString* para retornar ao local de chamada.
+
+- **slice:** Divide o o código ASCII do caracter em 2 partes de 4 bits
+
+- **funcWriteData:** Altera o estado lógico de cada um dos pinos de dado do LCD (D7, D6, D5, D4) para o estado correspondete ao conjunto de 4 bits recebido. Essa função é usada duas vezes, uma para os 4 bits mais significativos do código ASCII e outra para os 4 bits menos significativos.
+
+Dentro da *funcWriteData* é preciso alterar o estado lógico de cada um dos 4 pinos de dado, para isso faz-se uso de uma função auxiliar *selPin*. Ela verifica qual pino terá seu estado lógico alterado e para qual estado lógico será alterado de acordo com o bit correspondente do conjunto. O fluxo da função pode ser visto na imagme abaixo, no qual **R11** corresponde ao index do bit e **R12** corresponde ao valor contido no bit, retornado pela função *getBit*.
+
+<div align="center">
+  <img src="/img/selPin.png" alt="Fluxograma da função writeString">
+   <p>
+      Fluxograma da função selPin
+    </p>
+</div>
 
 #### Conversão de Decimal para ASCII
 
-Texto aqui
+Os valores de temperatura e umidade retornados pela ESP vem em decimal, por conta disso se faz necessario converter esse valor para o equivalente ASCII dele. No entanto no caso de valores contendo dezenas e unidades, se faz necessario, alem dessa conversão, o fatiamento desses dois números, para que seja possivel exibi-lo no display. Para isso foi feita a função *getDigits* que recebe como entrada um valor em decimal, entre 0 e 99, e retorna o equivalente ao ASCII do número das dezenas e da unidade.
+
+Para a divisão em dois números e conversão para ASCII foi utilizada a seguinte logica:
+- Divide-se o número por 10 e obtem-se o número das dezenas
+- Multiplica-se o número das dezenas por 10 e se subtrai esse valor do número original e se obtem o valor das unidades.
+- Por fim soma-se a cada um desses valores 48. Desse modo obtem-se o equivalente ASCCI de cada digito do número.
 
 ### Módulo UART
 Este módulo foi projetado para realizar a configuração e uso da UART em uma Orange Pi PC Plus. A UART (Universal asynchronous Receiver/Transmitter) é um protocolo essencial para a comunicação serial entre dispositivos e foi dita para transmissões de palavras de 8 bits, com 1 bit de start, sem bit de paridade e com a velociadade de transmissão de aproxiamdamente 9600 bps. 
