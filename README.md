@@ -233,7 +233,7 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
 
 ##### Funções implementadas 
   1. initUART: 
-    - Inicializando a UART 
+  - Inicializando a UART 
       - È desabilitado duas vezes em sequência o reset da UART3 através do registrador BUS_SOFT_RST_REG4 
       - Habilita o PLL_PERIPH0 como fonte de clock de 600MHz através do registrador PLL_PERIPH0_CTRL_REG 
       - Seleciona o PLL_PERIPH0 como fonte de clock através do registrador APB2_CFG_REG 
@@ -248,7 +248,6 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
           Endereços Iguais Fonte:<a href="https://drive.google.com/file/d/1AV0gV4J4V9BVFAox6bcfLu2wDwzlYGHt/view">Datasheet Pag:466</a>
         </p>
       </div>
-
         - Para saber qual valor irá ser colocado no divisor é necessário realizar esta operação:
         <div align="center">
           <img src="/img/Formula_divisor.png" alt="Formula">
@@ -256,7 +255,7 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
           Fórmula Divisor
           </p>
       </div>
-
+      
        - Este número em binário é 111101000010.01, desta maneira é possivel saber o valor da parte baixa do divisor(01000010) e a parte alta(1111)
 
       - È registrado o valor 01000010 no DLL(divisor latch low) através do registrador UART_DLL 
