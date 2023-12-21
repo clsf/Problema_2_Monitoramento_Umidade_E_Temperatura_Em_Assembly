@@ -233,7 +233,6 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
 
 ##### Funções implementadas 
   1. initUART: 
-
     - Inicializando a UART 
       - È desabilitado duas vezes em sequência o reset da UART3 através do registrador BUS_SOFT_RST_REG4 
       - Habilita o PLL_PERIPH0 como fonte de clock de 600MHz através do registrador PLL_PERIPH0_CTRL_REG 
@@ -269,7 +268,6 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
 
       - Configura-se o tamanho da palavra como 8 bits e desativa o bit de paridade através do registrado UART_LCR 
   2. dataReceiver:
-
     - Após ser chamada, a função verifica se existe algum dado pronto para ser lido no buffer do receiver através do registrador UART_LSR verificando o bit DR(data ready)
 
     - Caso tenha algum dado para ser lido é lido o endereço de memória correspondente ao receiver e o dado é obtido  
