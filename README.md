@@ -45,7 +45,7 @@ Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a platafo
 
 ### Módulo GPIOMEM
 #### Módulos auxiliares
-##### unistd
+#### unistd
 O unistd é responsável por definir as constantes para os números de chamadas do sistema que serão utilizadas no programa. Essas constantes são associadas aos serviços do kernel do sistema operacional que podem ser invocados pelo programa.
 As quais são:
 - sys_restart_syscall (0): Esta chamada do sistema reinicia a execução de uma chamada anterior que foi interrompida.
@@ -64,7 +64,7 @@ As quais são:
   
 Essas constantes são usadas para identificar qual chamada do sistema deve ser feita quando o programa precisa interagir com o kernel do sistema operacional para realizar operações específicas, como ler ou escrever em arquivos, criar processos, entre outras.
 
-##### fileio
+#### fileio
 Esse módulo é responsável por definir os macros que encapsulam as chamadas do sistema relacionadas a operações de entrada e saída de arquivos. O código utiliza as constantes das chamadas do sistema definidas no unistd.
 Foram desenvolvivas quatro macros para gerenciar essas operações:
 - <b>openFile:</b> Macro responsável por abrir um arquivo em modo de leitura e escrita, utiliza a chamada do sistema sys_open.
