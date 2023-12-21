@@ -22,7 +22,19 @@ Problema 2 da disciplina de Sistemas Digitais - Monitoramento de Temperatura e H
 - [Conclusão](#conclusão)
 
 ## Introdução
-Nesta seção, abordaremos informações essenciais sobre o projeto, incluindo uma visão geral do desenvolvimento na plataforma Orange, módulos responsáveis e referências ao projeto de Paulo.
+
+Este projeto tem como foco o desenvolvimento de programas utilizando a linguagem Assembly, aplicando conceitos fundamentais de arquitetura de computadores. A principal ênfase recai sobre a programação em Assembly para um processador com arquitetura ARM, compreendendo o conjunto de instruções específico e sua aplicação conforme as demandas do sistema.
+
+Ao concluir este trabalho, espera-se que o/a discente alcance os seguintes objetivos:
+
+- Adquirir proficiência na programação em Assembly para processadores ARM.
+- Compreender e aplicar o conjunto de instruções da arquitetura ARM de acordo com as necessidades do sistema.
+- Avaliar o desempenho de um código Assembly, analisando medidas relacionadas ao comportamento da execução no sistema.
+
+O problema a ser abordado consiste no desenvolvimento de uma Interface Homem-Máquina (IHM) que apresente as informações de um sensor em um display LCD. Essa interface visa substituir uma versão anterior implementada em linguagem C, mantendo os mesmos requisitos. O protótipo da interface será integrado a um computador de placa única (SBC).
+
+O desenvolvimento no SBC Orange Pi apresenta algumas restrições como: o código deve ser escrito em assembly e deve ser utilizado somente a interface disponibilizada (botões, chaves e LCD).
+
 <div align="center">
   <img src="/img/fluxoHardware.drawio.png" alt="Fluxograma do hardware">
    <p>
@@ -30,18 +42,18 @@ Nesta seção, abordaremos informações essenciais sobre o projeto, incluindo u
     </p>
 </div>
 
-- **Projeto na Orange:** Descreva brevemente o projeto na plataforma Orange, destacando os principais módulos e suas responsabilidades.
+- **Projeto na Orange:** Este projeto foi desenvolvido utilizando a linguagem Assembly para realizar a comunicação eficiente com periféricos, além de processar e tratar os dados provenientes da ASP (Arquitetura de Sistema Percebido) por meio do protocolo de comunicação UART.
 
-- **Projeto de Paulo:** Forneça um link para o projeto de Paulo, permitindo que os usuários acessem mais informações relevantes.
+- **Projeto na ASP:** 
 
 ## Recursos Utilizados
-Liste os recursos, ferramentas e tecnologias que foram utilizados durante o desenvolvimento do projeto.
+
 
 ## Como Executar
-Forneça instruções claras sobre como executar o projeto. Isso pode incluir requisitos de sistema, instalação de dependências e passos específicos para a execução do código.
+
 
 ## Desenvolvimento - Módulos em Assembly da Orange
-Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a plataforma Orange.
+Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a plataforma Orange. <- Fazer
 
 ### Módulo GPIOMEM
 #### Módulos auxiliares
@@ -285,7 +297,7 @@ O módulo `OutputMenu` desempenha a função de exibir os resultados das solicit
 
 
 ## Conclusão
-Nesta seção, resuma o que foi alcançado durante o desenvolvimento. Utilize vídeos e imagens para destacar visualmente o progresso e os resultados do projeto.
+
 
 
 
