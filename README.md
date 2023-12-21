@@ -255,7 +255,7 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
           Fórmula Divisor
           </p>
       </div>
-      
+
        - Este número em binário é 111101000010.01, desta maneira é possivel saber o valor da parte baixa do divisor(01000010) e a parte alta(1111)
 
       - È registrado o valor 01000010 no DLL(divisor latch low) através do registrador UART_DLL 
@@ -266,9 +266,8 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
 
       - Configura-se o tamanho da palavra como 8 bits e desativa o bit de paridade através do registrado UART_LCR 
   2. dataReceiver:
-    - Após ser chamada, a função verifica se existe algum dado pronto para ser lido no buffer do receiver através do registrador UART_LSR verificando o bit DR(data ready)
-
-    - Caso tenha algum dado para ser lido é lido o endereço de memória correspondente ao receiver e o dado é obtido  
+  - Após ser chamada, a função verifica se existe algum dado pronto para ser lido no buffer do receiver através do registrador UART_LSR verificando o bit DR(data ready)
+  - Caso tenha algum dado para ser lido é lido o endereço de memória correspondente ao receiver e o dado é obtido  
 
   Para realizar o envio de dados a única operação necessária é armazenar um valor no endereço de memória correspondente ao transmitter da uart, por este motivo não foi necessária a criação de uma função especifica para isso.    
 
