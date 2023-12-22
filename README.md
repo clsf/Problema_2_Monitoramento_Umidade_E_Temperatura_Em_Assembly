@@ -193,7 +193,7 @@ Em condições de alimentação ideais a inicialização do display já é feita
 
 #### Implementação
 
-As instruções citadas anteriormente foram implementadas utilizando as funções *GPIOTurnOff* e *GPIOTurnOn* do modulo *gpiomen.s* para colocar em alto ou em baixo os pinos utilizados. Alem delas também foi utilizado a função *nanoSleep* para espera dos devidos tempos tanto para o *Eneble* quanto para o processo de inicialização.
+As instruções citadas anteriormente foram implementadas utilizando as funções *GPIOTurnOff* e *GPIOTurnOn* do modulo *gpiomen.s* para colocar em alto ou em baixo os pinos utilizados. Alem delas também foi utilizado a função *nanoSleep* para espera dos devidos tempos tanto para o *Enable* quanto para o processo de inicialização.
 
 #### Exibição de Strings
 
@@ -237,7 +237,7 @@ Para a divisão em dois números e conversão para ASCII foi utilizada a seguint
 - Por fim soma-se a cada um desses valores 48. Desse modo obtem-se o equivalente ASCCI de cada digito do número.
 
 ### Módulo UART
-Este módulo foi projetado para realizar a configuração e uso da UART em uma Orange Pi PC Plus. A UART (Universal asynchronous Receiver/Transmitter) é um protocolo essencial para a comunicação serial entre dispositivos e foi feita para transmissões de palavras de 8 bits, com 1 bit de start, sem bit de paridade e com a velociadade de transmissão de aproxiamdamente 9600 bps. 
+Este módulo foi projetado para realizar a configuração e uso da UART em uma Orange Pi PC Plus. A UART (Universal asynchronous Receiver/Transmitter) é um protocolo essencial para a comunicação serial entre dispositivos e foi feita para transmissões de palavras de 8 bits, com 1 bit de start, sem bit de paridade e com a velociadade de transmissão de aproximadamente 9600 bps. 
 
 
 #### Modo de operação
@@ -253,7 +253,7 @@ A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos 
     </p>
 </div>
 
-Além disso, para obter o endereço base do CCU, endereço base para acessar os registradores da seção "inicializando a UART",foi feita uma subtração com o endereço já obtido do PIOO, já que assim já estariamos com o endereço do CCU com a operação: 
+Além disso, para obter o endereço base do CCU, endereço base para acessar os registradores da seção "inicializando a UART",foi feita uma subtração com o endereço já obtido do PIO, já que assim já estariamos com o endereço do CCU com a operação: 
 
 <div align="center">
   <img src="/img/Formula_endereco.png" alt="Formula Endereço">
@@ -307,7 +307,7 @@ Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU
       - Configura-se o tamanho da palavra como 8 bits e desativa o bit de paridade através do registrado UART_LCR 
   2. dataReceiver:
   - Após ser chamada, a função verifica se existe algum dado pronto para ser lido no buffer do receiver através do registrador UART_LSR verificando o bit DR(data ready)
-  - Caso tenha algum dado para ser lido é lido o endereço de memória correspondente ao receiver e o dado é obtido  
+  - Caso tenha algum dado para ser lido, é lido o endereço de memória correspondente ao receiver, e o dado é obtido.Se não houver um dado para ser lido, permanece em um loop esperando que o DR se torne 1 para ler um dado  
 
   Para realizar o envio de dados a única operação necessária é armazenar um valor no endereço de memória correspondente ao transmitter da uart, por este motivo não foi necessária a criação de uma função especifica para isso.    
 
