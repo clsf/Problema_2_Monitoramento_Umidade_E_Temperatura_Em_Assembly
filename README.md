@@ -108,7 +108,7 @@ Além dela, existem outras duas funções, a funcGPIODirectionOut, que tem o pap
 3. **Nanosleep:** Essa função é a responsável por pausar a execução do programa por um tempo determinado. Ela possui duas entradas, a primeira é o tempo de entrada para pausar em segundos e nanossegundos, a segunda é o tempo que resta para pausar se for interrompido, utiliza a chamada do sistema sys_nanosleep para fazer essa pausa.
 
 #### Dados
-Nesse módulo é onde está declarado as variáveis que serão utilizadas por ele e pelos outros módulos do programa, podendo ir de mensagens que serão exibidas no LCD em ascii, assim como seu comprimento, variáveis que receberão os dados recebidos pela UART, `byte1` e `byte2`, para controle, como `tempCont` e `humCont`, que controlam respectivamente se a temperatura ou a umidade continua estão ativadas e `firstSend`, que salva a última resposta exibida na tela. 
+Nesse módulo é onde está declarado as variáveis que serão utilizadas por ele e pelos outros módulos do programa, podendo ir de mensagens que serão exibidas no LCD em ascii, assim como seu comprimento, variáveis que receberão os dados recebidos pela UART, `byte1` e `byte2`, para controle, como `tempCont` e `humCont`, que controlam respectivamente se a temperatura ou a umidade continua estão ativadas e `firstSend` que salva a última resposta exibida na tela. 
 Também foram definidos os contadores do programa, `mCount`, contador do estado do menu, `sCount`, contador do número do sensor , `cCount`, além das variáveis que recebem os dígitos do valor que chega da UART, após serem fatiados, `digit1` e `digit2`.
 Por fim, é descrito e armazenado em váriaveis, o endereço dos pinos da placa:
 | Variável|Pino|Hardware|
