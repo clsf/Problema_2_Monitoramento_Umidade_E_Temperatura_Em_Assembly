@@ -25,12 +25,6 @@ Problema 2 da disciplina de Sistemas Digitais - Monitoramento de Temperatura e H
 
 Este projeto tem como foco o desenvolvimento de programas utilizando a linguagem Assembly, aplicando conceitos fundamentais de arquitetura de computadores. A principal ênfase recai sobre a programação em Assembly para um processador com arquitetura ARM, compreendendo o conjunto de instruções específico e sua aplicação conforme as demandas do sistema.
 
-Ao concluir este trabalho, espera-se que o/a discente alcance os seguintes objetivos:
-
-- Adquirir proficiência na programação em Assembly para processadores ARM.
-- Compreender e aplicar o conjunto de instruções da arquitetura ARM de acordo com as necessidades do sistema.
-- Avaliar o desempenho de um código Assembly, analisando medidas relacionadas ao comportamento da execução no sistema.
-
 O problema a ser abordado consiste no desenvolvimento de uma Interface Homem-Máquina (IHM) que apresente as informações de um sensor em um display LCD. Essa interface visa substituir uma versão anterior implementada em linguagem C, mantendo os mesmos requisitos. O protótipo da interface será integrado a um computador de placa única (SBC).
 
 O desenvolvimento no SBC Orange Pi apresenta algumas restrições como: o código deve ser escrito em assembly e deve ser utilizado somente a interface disponibilizada (botões, chaves e LCD).
@@ -42,15 +36,64 @@ O desenvolvimento no SBC Orange Pi apresenta algumas restrições como: o códig
     </p>
 </div>
 
-- **Projeto na Orange:** Este projeto foi desenvolvido utilizando a linguagem Assembly para realizar a comunicação eficiente com periféricos, além de processar e tratar os dados provenientes da ASP (Arquitetura de Sistema Percebido) por meio do protocolo de comunicação UART.
+- **Projeto na Orange:** Este projeto foi desenvolvido utilizando a linguagem Assembly para realizar a comunicação eficiente com periféricos, além de processar e tratar os dados provenientes da ESP por meio do protocolo de comunicação UART.
 
-- **Projeto na ASP:** 
+- **Projeto na ESP:** Para estabelecer a comunicação com o sensor, foi utilizado o projeto do monitor de Sistemas Digitais desenvolvido durante o semestre 2023.2 na UEFS por Paulo Queiroz. No respectivo [repositório](https://github.com/PauloQueirozC/EspCodigoPBL2_20232), encontram-se informações detalhadas sobre os comandos utilizados e as respectivas respostas.
 
 ## Recursos Utilizados
 
+- **Placa de Desenvolvimento:** Orange Pi PC Plus
+  - Processador quad-core Allwinner H3 Cortex-A7
+  - 1 GB de RAM
+  - Armazenamento via cartão microSD
+  - Conectividade: USB, HDMI, Ethernet, Wi-Fi integrado
+    <div align="center">
+    <img src="/img/orange.PNG" alt="Orange Pi PC PLUS">
+     <p>
+       Orange Pi PC Plus.
+      </p>
+  </div>
+    
+- **Componentes de Interface:**
+  - LCD HD44780U (LCD-II)
+  - Botões
+  - Chave
+
+- **Linguagem de Programação:** Assembly
+  - Utilizada para o desenvolvimento do projeto, proporcionando um controle direto sobre o hardware da Orange Pi PC Plus.
 
 ## Como Executar
+Para executar este projeto na Orange Pi PC Plus, siga os passos abaixo:
 
+1. **Estabelecer Conexão SSH:**
+   - Abra o terminal no seu computador.
+   - Executar o seguinte comando para estabelecer uma conexão SSH com a Orange Pi PC Plus:
+     ```bash
+     ssh usuario@ip_da_orange_pi
+     ```
+   - Em caso de uso da SBC na UEFS substituir "usuario" por "aluno" e "ip_da_orange_pi" pelo endereço IP da Orange Pi PC Plus que fica identificado na placa.
+
+2. **Transferir Arquivos:**
+   - Mover os arquivos do projeto para a Orange Pi PC Plus utilizando o comando `scp` ou outra ferramenta de transferência de arquivos de sua escolha.
+     ```bash
+     scp caminho/do/arquivo usuario@ip_da_orange_pi:/caminho/destino
+     ```
+   - Substituir "caminho/do/arquivo" pelo caminho local do arquivo e "caminho/destino" pelo diretório de destino na Orange Pi PC Plus.
+
+3. **Compilar e Executar:**
+   - Navegar até o diretório onde os arquivos estão localizados na Orange Pi.
+     ```bash
+     cd /caminho/do/projeto
+     ```
+   - Executar o comando `make all` para compilar o código-fonte.
+   - O arquivo `Makefile` pode conter comandos como:
+     ```bash
+     as -o main.o main.s
+     ld -o main main.o
+     ```
+     - `as`: Assembler, converte o código Assembly em código de máquina (object file).
+     - `ld`: Linker, combina o código de máquina com bibliotecas necessárias.
+     - `sudo ./main`: Executa o programa compilado.
 
 ## Desenvolvimento - Módulos em Assembly da Orange
 Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a plataforma Orange. <- Fazer
@@ -402,7 +445,11 @@ O módulo `OutputMenu` desempenha a função de exibir os resultados das solicit
 
 ## Conclusão
 
+O projeto alcançou com êxito o objetivo de redefinir a abordagem tradicional ao substituir o papel desempenhado pelo computador convencional. A transição do código original em C para o desenvolvimento direto em Assembly na Orange Pi PC Plus trouxe uma nova dimensão às possibilidades de interação e controle.
 
+A utlização linguagem Assembly conseguiu não apenas otimizar a eficiência do código, mas também explorar de maneira mais profunda o potencial da Orange Pi.
+
+A incorporação de periféricos como o LCD HD44780U, botões e chaves enriqueceu significativamente a experiência do usuário, proporcionando um controle mais direto e uma interface mais personalizada.
 
 
 
