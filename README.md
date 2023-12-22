@@ -87,15 +87,15 @@ Foram desenvolvivas quatro macros para gerenciar essas operações:
 Para utilizar os pinos da Orange PI, foi desenvolvido um módulo que é usado para acessar e configurar os registradores dos GPIO e dos pinos da UART, onde seria feito a inicialização e o mapeamento da memória desses registradores no sistema operacional da placa. Além disso o módulo é responsável por controlar e manipular os registradores do GPIO, alterando sua direção como entrada ou saída, também ligando ou desligando e lendo o dado que chega no pino do GPIO, assim como configurar o pino TX/RX da UART. Ele também contém os dados, como váriaveis e endereços de pinos que serão utlizados nesse e em outros módulos.
 
 #### Mapeamento e Configuração
-De início, são definidas quatro constantes que srão utilizadas para mapear e configurar a memória:
+De início, são definidas quatro constantes que serão utilizadas para mapear e configurar a memória:
 - <b>pagelen:</b> Define o tamanho da página;
 - <b>PROT_READ:</b> Opção de proteção para leitura;
 - <b>PROT_WRITE:</b> Opção de proteção para escrita;
 - <b>MAP_SHARED:</b> Opção de memória compartilhada.
 
 As macros, mapMem e mapMemUART, ambas funcionam da mesma forma, com a diferença que a primeira mapeia a memória dos pinos gerais do GPIO, e a segunda dos pinos da UART.
-Primeiro, é aberto o arquivo /dev/mem, que é um dispositivo do sistema de arquivos do Linux que permite o acesso direto à memória física do computador, sem a necessidade de utilizar o mecanismo tradicional de leitura e escrita de arquivos. E é verificado se ocorreu algum erro na abertura do arquivo.
-Após, é carregado o endereço base dos registradores do GPIO ou da UART, gpioaddr e uartaddr respectivamente, e o tamanho desejado da memória. Feita a proteção de memória de leitura e escrita utilizando as constantes já definidas e especificado que a memória deve ser compartilhada.
+Primeiro, é aberto o arquivo `/dev/mem`, que é um dispositivo do sistema de arquivos do Linux que permite o acesso direto à memória física do computador, sem a necessidade de utilizar o mecanismo tradicional de leitura e escrita de arquivos. E é verificado se ocorreu algum erro na abertura do arquivo.
+Após, é carregado o endereço base dos registradores do GPIO ou da UART, `gpioaddr` e `uartaddr` respectivamente, e o tamanho desejado da memória. Feita a proteção de memória de leitura e escrita utilizando as constantes já definidas e especificado que a memória deve ser compartilhada.
 Por fim, a macro tem a chamada de sistemas sys_mmap2, que mapeia os arquivos ou dispositivos na memória e verifica se houve algum erro.
 O endereço base do GPIO é salvo no registrador R8 e o da UART no registrador R6.
 
