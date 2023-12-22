@@ -55,8 +55,7 @@ O desenvolvimento no SBC Orange Pi apresenta algumas restrições como: o códig
 ## Desenvolvimento - Módulos em Assembly da Orange
 Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a plataforma Orange. <- Fazer
 
-### Módulo GPIOMEM
-#### Módulos auxiliares
+### Módulos auxiliares
 #### unistd
 O unistd é responsável por definir as constantes para os números de chamadas do sistema que serão utilizadas no programa. Essas constantes são associadas aos serviços do kernel do sistema operacional que podem ser invocados pelo programa.
 As quais são:
@@ -83,6 +82,15 @@ Foram desenvolvivas quatro macros para gerenciar essas operações:
 - <b>redFile:</b> Usa a chamada de sistema sys_read para ler um arquivo já aberto.
 - <b>writeFile</b> Usa a chamada de sistema sys_write para escrever em um arquivo já aberto.
 - <b>flushClose</b> Utiliza duas chamadas de sistema, a sys_fsync para sincronizar e armaenar o estado do arquivo aberto e a sys_close para fechá-lo.
+
+### Módulo GPIOMEM
+Para utilizar os pinos da Orange PI, foi desenvolvido um módulo que é usado para acessar e configurar os registradores dos GPIO e dos pinos da UART, onde seria feito a inicialização e o mapeamento da memória desses registradores no sistema operacional da placa. Além disso o módulo é responsável por controlar e manipular os registradores do GPIO, alterando sua direção como entrada ou saída, também ligando ou desligando e lendo o dado que chega no pino do GPIO, assim como configurar o pino TX/RX da UART. Ele também contém os dados, como váriaveis e endereços de pinos que serão utlizados nesse e em outros módulos.
+
+#### Mapeamento e Configuração
+
+#### Manipulando o GPIO
+
+#### Dados
 
 ### Módulo LCD
 Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
