@@ -108,6 +108,21 @@ Além dela, existem outras duas funções, a funcGPIODirectionOut, que tem o pap
 3. **Nanosleep:** Essa função é a responsável por pausar a execução do programa por um tempo determinado. Ela possui duas entradas, a primeira é o tempo de entrada para pausar em segundos e nanossegundos, a segunda é o tempo que resta para pausar se for interrompido, utilisa a chamada do sistema sys_nanosleep para fazer essa pausa.
 
 #### Dados
+Nesse módulo é onde está declarado as variáveis que serão utilizadas por ele e pelos outros módulos do programa, podendo ir de mensagens que serão exibidas no LCD em ascii, assim como seu comprimento, variáveis que receberão os dados recebidos pela UART, `byte1` e `byte2`, para controle, como `tempCont` e `humCont`, que controlam respectivamente se a temperatura ou a umidade continua estão ativadas e `firstSend`, que salva a última resposta exibida na tela. 
+Também foram definidos os contadores do programa, `mCount`, contador do estado do menu, `sCount`, contador do número do sensor , `cCount`, além das variáveis que recebem os dígitos do valor que chega da UART, após serem fatiados, `digit1` e `digit2`.
+Por fim, é descrito e armazenado em váriaveis, o endereço dos pinos da placa:
+| Variável|Pino|Hardware|
+|---------|----|--------|
+| B0      |PA07|Botão 0 |
+| B1      |PA10|Botão 1 |
+| B2      |PA20|Botão 2 |
+| C4      |PA03|Chave 4 |
+| TX      |PA13|UART TX |
+| RX      |PA14|UART RX |
+
+Os pinos podem ser conferidos com mais detalhes na <a href="#pinosgpio">tabela.</a>.
+
+
 
 ### Módulo LCD
 Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
@@ -231,7 +246,7 @@ O modo de operação UART utilizado é o 16550. Este modo contém buffers no for
 #### Escolha de pinos e endereçamento
 A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos escolhidos foram o PA13 e PA14, que são podem ser utilizados como UART3.Sendo assim as escolhas de endereços e configurações tiveram como base UART3.
 
-<div align="center">
+<div id="pinosgpio" align="center">
   <img src="/img/imagem_gpioo.png" alt="Gpioo Pinos">
    <p>
       Orange Pi PC Plus Pinout Fonte: <a href="http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-PC-Plus.html">Orange pi pc plus</a>
