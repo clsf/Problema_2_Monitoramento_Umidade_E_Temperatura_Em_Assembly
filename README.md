@@ -79,9 +79,9 @@ Essas constantes são usadas para identificar qual chamada do sistema deve ser f
 Esse módulo é responsável por definir os macros que encapsulam as chamadas do sistema relacionadas a operações de entrada e saída de arquivos. O código utiliza as constantes das chamadas do sistema definidas no unistd.
 Foram desenvolvivas quatro macros para gerenciar essas operações:
 - <b>openFile:</b> Macro responsável por abrir um arquivo em modo de leitura e escrita, utiliza a chamada do sistema sys_open.
-- <b>redFile:</b> Usa a chamada de sistema sys_read para ler um arquivo já aberto.
+- <b>readFile:</b> Usa a chamada de sistema sys_read para ler um arquivo já aberto.
 - <b>writeFile</b> Usa a chamada de sistema sys_write para escrever em um arquivo já aberto.
-- <b>flushClose</b> Utiliza duas chamadas de sistema, a sys_fsync para sincronizar e armaenar o estado do arquivo aberto e a sys_close para fechá-lo.
+- <b>flushClose</b> Utiliza duas chamadas de sistema, a sys_fsync para sincronizar e armazenar o estado do arquivo aberto e a sys_close para fechá-lo.
 
 ### Módulo GPIOMEM
 Para utilizar os pinos da Orange PI, foi desenvolvido um módulo que é usado para acessar e configurar os registradores dos GPIO e dos pinos da UART, onde seria feito a inicialização e o mapeamento da memória desses registradores no sistema operacional da placa. Além disso o módulo é responsável por controlar e manipular os registradores do GPIO, alterando sua direção como entrada ou saída, também ligando ou desligando e lendo o dado que chega no pino do GPIO, assim como configurar o pino TX/RX da UART. Ele também contém os dados, como váriaveis e endereços de pinos que serão utlizados nesse e em outros módulos.
