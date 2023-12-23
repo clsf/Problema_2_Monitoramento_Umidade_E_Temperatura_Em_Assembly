@@ -98,8 +98,7 @@ Para executar este projeto na Orange Pi PC Plus, siga os passos abaixo:
 ## Desenvolvimento - Módulos em Assembly da Orange
 Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a plataforma Orange. <- Fazer
 
-### Módulo GPIOMEM
-#### Módulos auxiliares
+### Módulos auxiliares
 #### unistd
 O unistd é responsável por definir as constantes para os números de chamadas do sistema que serão utilizadas no programa. Essas constantes são associadas aos serviços do kernel do sistema operacional que podem ser invocados pelo programa.
 As quais são:
@@ -123,27 +122,68 @@ Essas constantes são usadas para identificar qual chamada do sistema deve ser f
 Esse módulo é responsável por definir os macros que encapsulam as chamadas do sistema relacionadas a operações de entrada e saída de arquivos. O código utiliza as constantes das chamadas do sistema definidas no unistd.
 Foram desenvolvivas quatro macros para gerenciar essas operações:
 - <b>openFile:</b> Macro responsável por abrir um arquivo em modo de leitura e escrita, utiliza a chamada do sistema sys_open.
-- <b>redFile:</b> Usa a chamada de sistema sys_read para ler um arquivo já aberto.
+- <b>readFile:</b> Usa a chamada de sistema sys_read para ler um arquivo já aberto.
 - <b>writeFile</b> Usa a chamada de sistema sys_write para escrever em um arquivo já aberto.
-- <b>flushClose</b> Utiliza duas chamadas de sistema, a sys_fsync para sincronizar e armaenar o estado do arquivo aberto e a sys_close para fechá-lo.
+- <b>flushClose</b> Utiliza duas chamadas de sistema, a sys_fsync para sincronizar e armazenar o estado do arquivo aberto e a sys_close para fechá-lo.
+
+### Módulo GPIOMEM
+Para utilizar os pinos da Orange PI, foi desenvolvido um módulo que é usado para acessar e configurar os registradores dos GPIO e dos pinos da UART, onde seria feito a inicialização e o mapeamento da memória desses registradores no sistema operacional da placa. Além disso o módulo é responsável por controlar e manipular os registradores do GPIO, alterando sua direção como entrada ou saída, também ligando ou desligando e lendo o dado que chega no pino do GPIO, assim como configurar o pino TX/RX da UART. Ele também contém os dados, como váriaveis e endereços de pinos que serão utlizados nesse e em outros módulos.
+
+#### Mapeamento e Configuração
+De início, são definidas quatro constantes que serão utilizadas para mapear e configurar a memória:
+- <b>pagelen:</b> Define o tamanho da página;
+- <b>PROT_READ:</b> Opção de proteção para leitura;
+- <b>PROT_WRITE:</b> Opção de proteção para escrita;
+- <b>MAP_SHARED:</b> Opção de memória compartilhada.
+
+As macros, mapMem e mapMemUART, ambas funcionam da mesma forma, com a diferença que a primeira mapeia a memória dos pinos gerais do GPIO, e a segunda dos pinos da UART.
+Primeiro, é aberto o arquivo `/dev/mem`, que é um dispositivo do sistema de arquivos do Linux que permite o acesso direto à memória física do computador, sem a necessidade de utilizar o mecanismo tradicional de leitura e escrita de arquivos. E é verificado se ocorreu algum erro na abertura do arquivo.
+Após, é carregado o endereço base dos registradores do GPIO ou da UART, `gpioaddr` e `uartaddr` respectivamente, e o tamanho desejado da memória. Feita a proteção de memória de leitura e escrita utilizando as constantes já definidas e especificado que a memória deve ser compartilhada.
+Por fim, a macro tem a chamada de sistemas sys_mmap2, que mapeia os arquivos ou dispositivos na memória e verifica se houve algum erro.
+O endereço base do GPIO é salvo no registrador R8 e o da UART no registrador R6.
+
+#### Manipulando o GPIO
+O módulo possui algumas funções definidas para configurar corretamente os pinos da placa, tanto do GPIO, quanto da UART, essas funções são chamadas por macros para facilitar o manuseio dos registradores de forma que os valores contidos anteriormente não fossem perdidos. 
+1. **Entrada e Saída:** Para ligar os pinos TX/RX da UART foi desenvolvida a função funcGPIOUART que carrega o valor do endereço dos pinos e os liga, para que quando a UART for inicializada eles estejam funcionando da forma desejada.
+Além dela, existem outras duas funções, a funcGPIODirectionOut, que tem o papel de receber o endereço de um pino da GPIO e mudar o modo para output, usado por exemplo para que seja exibida uma mensagem no LCD. E a função funcGPIODirectionIn muda o modo do pino para input, para que seja feita a entrada de um botão ou chave.
+1. **Ligado e Desligado:** As funções funcGPIOTurnOff e funcGPIOTurnOn exercem o papel de ligar e desligar os pinos do GPIO. Essas funções recebem o registrador contendo o endereço do pino, a função de ligar vai inserir 1 na posição deslocada para ativar o pino, a função de desligar vai fazer o deslocamento para limpar essa posição, desativando-o.
+2. **Leitura de Dados:** A função funcGPIOGetData, tem o propósito de pegar o dado recebido pelo pino, ela lê o valor do bit correspondente ao pino GPIO específico do registrador de dados e retorna esse valor deslocado para a posição menos significativa do registrador de entrada R0, é usado para receber os dados dos botões e da chave utilizadas no protótipo. 
+3. **Nanosleep:** Essa função é a responsável por pausar a execução do programa por um tempo determinado. Ela possui duas entradas, a primeira é o tempo de entrada para pausar em segundos e nanossegundos, a segunda é o tempo que resta para pausar se for interrompido, utiliza a chamada do sistema sys_nanosleep para fazer essa pausa.
+
+#### Dados
+Nesse módulo é onde está declarado as variáveis que serão utilizadas por ele e pelos outros módulos do programa, podendo ir de mensagens que serão exibidas no LCD em ascii, assim como seu comprimento, variáveis que receberão os dados recebidos pela UART, `byte1` e `byte2`, para controle, como `tempCont` e `humCont`, que controlam respectivamente se a temperatura ou a umidade continua estão ativadas e `firstSend` que salva a última resposta exibida na tela. 
+Também foram definidos os contadores do programa, `mCount`, contador do estado do menu, `sCount`, contador do número do sensor , `cCount`, além das variáveis que recebem os dígitos do valor que chega da UART, após serem fatiados, `digit1` e `digit2`.
+Por fim, é descrito e armazenado em váriaveis, o endereço dos pinos da placa:
+| Variável|Pino|Hardware|
+|---------|----|--------|
+| B0      |PA07|Botão 0 |
+| B1      |PA10|Botão 1 |
+| B2      |PA20|Botão 2 |
+| C4      |PA03|Chave 4 |
+| TX      |PA13|UART TX |
+| RX      |PA14|UART RX |
+
+Os pinos podem ser conferidos com mais detalhes na <a href="#pinosgpio">tabela.</a>.
+
+
 
 ### Módulo LCD
 Como interface de visualização foi utilizado um display LCD da marca HITACHI, modelo HD44780U (LCD-II). Esse display tem uma resolução 16x2 o que indica que ele pode exibir 2 linhas com 16 caracteres.
 
 <div align="center">
-  <img src="/img/display.png" alt="HD44780U (LCD-II)">
+  <img src="/img/display.png" alt="HD44780U (LCD-II)" width="300">
    <p>
-      Diagrama de Estados do Receiver.
+      HD44780U (LCD-II)
     </p>
 </div>
 
 #### Pinos
 
 O display possui ao todo 14 pinos, porém para solução foi necessário fazer o manuseio somente dos seguintes pinos:
-- RS: Seleciona o registrador de instrução caso esteja em 0 ou o registrador de dados caso esteja em 1.
-- R/W: Seleciona a operação de escrita caso esteja em 0 ou a operação de leitura caso esteja em 1.
-- E: Inicia uma operação de leitura ou escrita de dados quando em 1.
-- D7, D6, D5, D4: Usado para transferência e recepção de dados.
+- **RS:** Seleciona o registrador de instrução caso esteja em 0 ou o registrador de dados caso esteja em 1.
+- **R/W:** Seleciona a operação de escrita caso esteja em 0 ou a operação de leitura caso esteja em 1.
+- **E:** Inicia uma operação de leitura ou escrita de dados quando em 1.
+- **D7, D6, D5, D4:** Usado para transferência e recepção de dados.
 
 Obs. No kit de desenvolvimento utilizado o pino R/W está ligado diretamente ao GND, logo só é possível fazer operações de escrita.
 
@@ -166,14 +206,14 @@ A comunicação com o display é feita através de instruções enviadas ao mesm
 Após colocar todos os pinos utilizados nas instruções com os sinais referentes a instrução a ser tomada é necessário colocar em alto a entrada E (enable) do display. Para isso deve seguir os devidos intervalos de tempo informados pelo fabricante.
 
 <div align="center">
-  <img src="/img/tempo_do_eneable.png" alt="Waveform do Tempo da Operação de Escrita">
+  <img src="/img/tempo_do_eneable.png" alt="Waveform do Tempo da Operação de Escrita" width="400">
    <p>
       Waveform do Tempo da Operação de Escrita. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
     </p>
 </div>
 
 <div align="center">
-  <img src="/img/tempo_do_eneable_tabela.png" alt="Tempo da Operação de Escrita">
+  <img src="/img/tempo_do_eneable_tabela.png" alt="Tempo da Operação de Escrita" width="400">
    <p>
       Tempo da Operação de Escrita. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
     </p>
@@ -183,10 +223,10 @@ Ao observar as imagens é possivel perceber que para que a instrução seja exec
 
 #### Inicialização
 
-Em condições de alimentação ideais a inicialização do display já é feita automaticamente porem como a chance de falha em alcansar essas condições se faz necessario a implementação da inicialização. A inicialização se dá de acordo com o fluxograma a seguir.
+Em condições de alimentação ideais a inicialização do display já é feita automaticamente porem como a chance de falha em alcançar essas condições se faz necessario a implementação da inicialização. A inicialização se dá de acordo com o fluxograma a seguir.
 
 <div align="center">
-  <img src="/img/inicializacao_do_display.png" alt="Processo de Inicialização do Display">
+  <img src="/img/inicializacao_do_display.png" alt="Processo de Inicialização do Display" width="400">
    <p>
       Processo de Inicialização do Display. Fonte: <a href="https://www.sparkfun.com/datasheets/LCD/HD44780.pdf">Datasheet</a>
     </p>
@@ -196,41 +236,106 @@ Em condições de alimentação ideais a inicialização do display já é feita
 
 #### Implementação
 
-As instruções citadas anteriormente foram implementadas utilizando as funções *GPIOTurnOff* e *GPIOTurnOn* do modulo *gpiomen.s* para colocar em alto ou em baixo os pinos utilizados. Alem delas também foi utilizado a função *nanoSleep* para espera dos devidos tempos tanto para o *Eneble* quanto para o processo de inicialização.
+As instruções citadas anteriormente foram implementadas utilizando as funções *GPIOTurnOff* e *GPIOTurnOn* do modulo *gpiomen.s* para colocar em alto ou em baixo os pinos utilizados. Alem delas também foi utilizado a função *nanoSleep* para espera dos devidos tempos tanto para o *Enable* quanto para o processo de inicialização.
 
 #### Exibição de Strings
 
-Texto aqui
+Para exibição de uma string já inserida na memoria (.data) diretamente no display, foi necessario fazer um algoritmo que faz uso da instrução wiriteData para escrever caracter a caracter da string no display.
+
+O algortimo é composto por diversas partes, e segue o fluxo presente na imagem abaixo
+
+<div align="center">
+  <img src="/img/writeString.png" alt="Fluxograma da função writeString" width="150">
+   <p>
+      Fluxograma da função writeString
+    </p>
+</div>
+
+- **writeString:** É uma macro que é chamada quando se deseja exibir uma string no display. Ela é reponsavel por iniciar o procedimento de exibição. Para tal, ela salva a string no registrador R1 e também o tamanho da mesma no registrador R2. Além disso ela inicializa o contador (R0) que guarda o index do caracter a ser escrito no display.
+
+- **funcWriteString:** Salva o link para o local de chamada da função.
+
+- **loopWriteString:** Nessa label, cada caracter da string é percorrido e exibido, incrementando-se o valor de R0 até que ele seja igual ao tamanho da string. Ao final é usado o link salvo em *funcWriteString* para retornar ao local de chamada.
+
+- **slice:** Divide o o código ASCII do caracter em 2 partes de 4 bits
+
+- **funcWriteData:** Altera o estado lógico de cada um dos pinos de dado do LCD (D7, D6, D5, D4) para o estado correspondete ao conjunto de 4 bits recebido. Essa função é usada duas vezes, uma para os 4 bits mais significativos do código ASCII e outra para os 4 bits menos significativos.
+
+Dentro da *funcWriteData* é preciso alterar o estado lógico de cada um dos 4 pinos de dado, para isso faz-se uso de uma função auxiliar *selPin*. Ela verifica qual pino terá seu estado lógico alterado e para qual estado lógico será alterado de acordo com o bit correspondente do conjunto. O fluxo da função pode ser visto na imagme abaixo, no qual **R11** corresponde ao index do bit e **R12** corresponde ao valor contido no bit, retornado pela função *getBit*.
+
+<div align="center">
+  <img src="/img/selPin.png" alt="Fluxograma da função writeString">
+   <p>
+      Fluxograma da função selPin
+    </p>
+</div>
 
 #### Conversão de Decimal para ASCII
 
-Texto aqui
+Os valores de temperatura e umidade retornados pela ESP vem em decimal, por conta disso se faz necessario converter esse valor para o equivalente ASCII dele. No entanto no caso de valores contendo dezenas e unidades, se faz necessario, alem dessa conversão, o fatiamento desses dois números, para que seja possivel exibi-lo no display. Para isso foi feita a função *getDigits* que recebe como entrada um valor em decimal, entre 0 e 99, e retorna o equivalente ao ASCII do número das dezenas e da unidade.
+
+Para a divisão em dois números e conversão para ASCII foi utilizada a seguinte logica:
+- Divide-se o número por 10 e obtem-se o número das dezenas
+- Multiplica-se o número das dezenas por 10 e se subtrai esse valor do número original e se obtem o valor das unidades.
+- Por fim soma-se a cada um desses valores 48. Desse modo obtem-se o equivalente ASCCI de cada digito do número.
 
 ### Módulo UART
-Este módulo foi projetado para realizar a configuração e uso da UART em uma Orange Pi PC Plus. A UART (Universal asynchronous Receiver/Transmitter) é um protocolo essencial para a comunicação serial entre dispositivos e foi dita para transmissões de palavras de 8 bits, com 1 bit de start, sem bit de paridade e com a velociadade de transmissão de aproxiamdamente 9600 bps. 
+Este módulo foi projetado para realizar a configuração e uso da UART em uma Orange Pi PC Plus. A UART (Universal asynchronous Receiver/Transmitter) é um protocolo essencial para a comunicação serial entre dispositivos e foi feita para transmissões de palavras de 8 bits, com 1 bit de start, sem bit de paridade e com a velociadade de transmissão de aproximadamente 9600 bps. 
 
 
 #### Modo de operação
 O modo de operação UART utilizado é o 16550. Este modo contém buffers no formato FIFO tanto para o transmitter como para o receiver, que servem para armazenar os dados que são recebidos dando a possibilidade do programador que estiver utilizando este modo escolha em que momento os dados serão lidos.
 
-#### Escolha de pinos
-A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos escolhidos foram o PA13 e PA14, que são podem ser utilizados como UART3.Sendo assim as escolhas de endereços e configurações tiveram como base UART3.(imagem Gpioo?)
+#### Escolha de pinos e endereçamento
+A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos escolhidos foram o PA13 e PA14, que são podem ser utilizados como UART3.Sendo assim as escolhas de endereços e configurações tiveram como base UART3.
+
+<div id="pinosgpio" align="center">
+  <img src="/img/imagem_gpioo.png" alt="Gpioo Pinos">
+   <p>
+      Orange Pi PC Plus Pinout Fonte: <a href="http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-PC-Plus.html">Orange pi pc plus</a>
+    </p>
+</div>
+
+Além disso, para obter o endereço base do CCU, endereço base para acessar os registradores da seção "inicializando a UART",foi feita uma subtração com o endereço já obtido do PIO, já que assim já estariamos com o endereço do CCU com a operação: 
+
+<div align="center">
+  <img src="/img/Formula_endereco.png" alt="Formula Endereço">
+    <p>
+    Fórmula endereço do CCU
+    </p>
+</div> 
+
+Já que o endereço de memória do PIOO está 0x800 posições a frente do CCU 
+
+<div align="center">
+  <img src="/img/endereco_CCU.png" alt="Endereço CCU">
+   <p>
+       Endereço do CCU e PIOO Fonte:<a href="https://drive.google.com/file/d/1AV0gV4J4V9BVFAox6bcfLu2wDwzlYGHt/view">Datasheet Pag:84</a>
+    </p>
+</div>
 
 ##### Funções implementadas 
   1. initUART: 
-    - Inicializando a UART 
+  - Inicializando a UART 
       - È desabilitado duas vezes em sequência o reset da UART3 através do registrador BUS_SOFT_RST_REG4 
       - Habilita o PLL_PERIPH0 como fonte de clock de 600MHz através do registrador PLL_PERIPH0_CTRL_REG 
       - Seleciona o PLL_PERIPH0 como fonte de clock através do registrador APB2_CFG_REG 
       - Habilita o UART3_GATING que para ativar o clock no barramento através do registrador BUS_CLK_GATING_REG3  
-    - Configurando a UART3 
+  - Configurando a UART3 
       - È habilitado o FIFO através do registrador UART_FCR
-      - Devido ao fato dos registradores que representam a parte alta e parte baixa do divisor do baud rate possuirem o mesmo endereço de memória que outros registradores que tem funções diferentes, é necessário que seja ativado o DLAB, que está no registrador UART_LCR, para que os endereços de memoria que serão utilizados tenham a função esperada de divisor  
+      - Devido ao fato dos registradores que representam a parte alta e parte baixa do divisor do baud rate possuirem o mesmo endereço de memória que outros registradores que tem funções diferentes, é necessário que seja ativado o DLAB, que está no registrador UART_LCR, para que os endereços de memoria que serão utilizados tenham a função esperada de divisor   
+
+        <div align="center">
+          <img src="/img/Enderecos_iguais.png" alt="Endereços iguais">
+          <p>
+          Endereços Iguais Fonte:<a href="https://drive.google.com/file/d/1AV0gV4J4V9BVFAox6bcfLu2wDwzlYGHt/view">Datasheet Pag:466</a>
+        </p>
+      </div>
         - Para saber qual valor irá ser colocado no divisor é necessário realizar esta operação:
         <div align="center">
           <img src="/img/Formula_divisor.png" alt="Formula">
           <p>
-          Formula Divisor
+          Fórmula Divisor
           </p>
       </div>
 
@@ -244,11 +349,10 @@ A orange Pi pc plus, possui diversos pinos que podem servir para UART, os pinos 
 
       - Configura-se o tamanho da palavra como 8 bits e desativa o bit de paridade através do registrado UART_LCR 
   2. dataReceiver:
-    - Após ser chamada, a função verifica se existe algum dado pronto para ser lido no buffer do receiver através do registrador UART_LSR verificando o bit DR(data ready)
-    - Caso tenha algum dado para ser lido é lido o endereço de memória correspondente ao receiver e o dado é obtido  
+  - Após ser chamada, a função verifica se existe algum dado pronto para ser lido no buffer do receiver através do registrador UART_LSR verificando o bit DR(data ready)
+  - Caso tenha algum dado para ser lido, é lido o endereço de memória correspondente ao receiver, e o dado é obtido.Se não houver um dado para ser lido, permanece em um loop esperando que o DR se torne 1 para ler um dado  
 
-  Para realizar o envio de dados a única operação necessária é armazenar um valor no endereço de memória correspondente ao transmitter da uart, por este motivo não foi necessária a criação de uma função especifica para isso 
-    
+  Para realizar o envio de dados a única operação necessária é armazenar um valor no endereço de memória correspondente ao transmitter da uart, por este motivo não foi necessária a criação de uma função especifica para isso.    
 
 ### Orquestração das funcionalidades
 A coordenação e execução das funcionalidades essenciais são centralizadas em três módulos principais: main, inputMenu e outputMenu. Conforme ilustrado no diagrama, a main desempenha um papel crucial no mapeamento, inicialização e leitura do buffer, enquanto o inputMenu encarrega-se da leitura das solicitações do usuário. Por sua vez, o outputMenu é responsável por gerar e apresentar as respostas correspondentes a essas solicitações. Essa divisão de responsabilidades entre os módulos constitui a base para o funcionamento coordenado e eficiente do sistema.
