@@ -96,7 +96,7 @@ Para executar este projeto na Orange Pi PC Plus, siga os passos abaixo:
      - `sudo ./main`: Executa o programa compilado.
 
 ## Desenvolvimento - Módulos em Assembly da Orange
-Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a plataforma Orange. <- Fazer
+Nesta seção, detalharemos os módulos desenvolvidos em Assembly para a plataforma Orange, sendo eles: Os módulos auxiliares responsáveis pelo mapeamento e inicialização do GPIO e GPIOUART, como também o módulo da LCD, da UART e, por fim, os módulos responsáveis pela orquestração do programa.
 
 ### Módulos auxiliares
 #### unistd
@@ -447,7 +447,8 @@ O módulo `OutputMenu` desempenha a função de exibir os resultados das solicit
 
 O projeto alcançou com êxito o objetivo de redefinir a abordagem tradicional ao substituir o papel desempenhado pelo computador convencional. A transição do código original em C para o desenvolvimento direto em Assembly na Orange Pi PC Plus trouxe uma nova dimensão às possibilidades de interação e controle.
 
-A utlização linguagem Assembly conseguiu não apenas otimizar a eficiência do código, mas também explorar de maneira mais profunda o potencial da Orange Pi.
+A utlização linguagem Assembly conseguiu não apenas otimizar a eficiência do código, mas também explorar de maneira mais profunda o potencial da Orange Pi. O funcionamento do código Assembly desenvolvido para este projeto incorpora a diretiva `.ltorg`, uma instrução essencial que desempenha um papel crucial na otimização da gestão de constantes literais durante a execução do programa. 
+A importância da diretiva `.ltorg` torna-se evidente em situações onde instruções pseudoinstruções, como LDR, podem estar fora do alcance padrão. Ao utilizar o `.ltorg`, garantimos que um literal pool seja montado dentro do alcance apropriado, evitando assim a execução incorreta de constantes como instruções.
 
 A incorporação de periféricos como o LCD HD44780U, botões e chaves enriqueceu significativamente a experiência do usuário, proporcionando um controle mais direto e uma interface mais personalizada.
 
