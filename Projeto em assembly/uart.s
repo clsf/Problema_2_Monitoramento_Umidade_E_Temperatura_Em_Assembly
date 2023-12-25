@@ -10,7 +10,7 @@ initUART:
     bic r2, r2, r1
     str r2, [r0, #0x02D8]
 
-    @ Desabilita o reset da UART
+    @ Desabilita o reset da UART(Se não for feito isso novamente, a comunição uart não funciona corretamente)
     mov r0, r8
     sub r0, r0, #0x800
     ldr r2, [r0, #0x02D8] @ Carrega o reg BUS_SOFT_RST_REG4
@@ -19,7 +19,7 @@ initUART:
     orr r2, r2, r1
     str r2, [r0, #0x02D8]
 
-    @ Habilita o PLL
+    @ Habilita o PLL como fonte do clock 
     mov r0, r8
     sub r0, r0, #0x800
     ldr r2, [r0, #0x0028] @ Carrega o reg PLL_PERIPH0_CTRL_REG
@@ -28,7 +28,7 @@ initUART:
     orr r2, r2, r1
     str r2, [r0, #0x0028]
 
-    @ Seleciona o PLL como clock
+    @ Seleciona o PLL como a fonte do clock para uart
     mov r0, r8
     sub r0, r0, #0x800
     ldr r2, [r0, #0x0058] @ Carrega o reg APB2_CFG_REG
@@ -37,7 +37,7 @@ initUART:
     orr r2, r2, r1
     str r2, [r0, #0x0058]
 
-    @ Habilita o UART3_GATING
+    @ Habilita o UART3_GATING que serve para ativar o clock no barramento  
     mov r0, r8
     sub r0, r0, #0x800
     ldr r2, [r0, #0x006C] @ Carrega o reg BUS_CLK_GATING_REG3
@@ -65,7 +65,7 @@ initUART:
     orr r2, r2, r1
     str r2, [r0, #0x000C]
 
-    @ Muda o DLS para 8 bits
+    @ Muda o DLS para 8 bits o tamanho da palavra que vai ser enviada e recebida, e desativa bit de paridade
     mov r0, r6
     mov r1, #0b11
     ldr r2, [r0, #0x000C] @ Carrega o reg UART_LCR
@@ -108,6 +108,7 @@ initUART:
 @ Leitura
 @ =======
 
+@Função responsável ler o buffer do receiver da uart 
 dataReceiver:
     push {lr}
 
@@ -116,7 +117,7 @@ loopDataReceiver:
     ldr r0, [r6, #0x0014] @ Carrega o DR
     and r0, r0, r1
     cmp r0, #0
-    beq loopDataReceiver 
+    beq loopDataReceiver @Verifica se tem um dado pronto para ser lido no buffer do receiver do fifo da uart
     ldr r0, [r6]
     pop {pc}
 
